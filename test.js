@@ -5,7 +5,7 @@ let home = new fb("./testing");
 // makedir.set((a)=>{
 //     console.log(a)
 // })
-console.log(
+// console.log(
     // home.add(home.make("proyect1").set(a=>{
     //     a.set("make0").set(a=>{
     //         a.set("play0")
@@ -27,5 +27,5 @@ console.log(
     // "\n",
     // home.make("play.ts"),
     // "\n",
-)
+// )
 // console.log('%c Success', 'color: green; font-size: 1.5em');
