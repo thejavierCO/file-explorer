@@ -22,13 +22,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var path = __importStar(require("path"));
-var fs = __importStar(require("fs"));
-var lastElement_1 = __importDefault(require("../lastElement"));
-var index_1 = __importDefault(require("../make/index"));
-var index_2 = __importDefault(require("../../FileBowser/index"));
-var Dir = (function () {
-    function Dir(root) {
+const path = __importStar(require("path"));
+const fs = __importStar(require("fs"));
+const lastElement_1 = __importDefault(require("../lastElement"));
+const index_1 = __importDefault(require("../make/index"));
+const index_2 = __importDefault(require("../../FileBowser/index"));
+class Dir {
+    constructor(root) {
         this.root = "";
         this.name = "";
         this.type = "dir";
@@ -36,10 +36,9 @@ var Dir = (function () {
         this.root = root;
         this.name = lastElement_1.default(this.root.split("\\"));
     }
-    Dir.prototype.read = function (name) {
-        var root = path.resolve(this.root, typeof name === "string" ? name : "");
-        return fs.readdirSync(root).map(function (e) { return new index_2.default(path.resolve(root, e)); });
-    };
-    return Dir;
-}());
+    read(name) {
+        let root = path.resolve(this.root, typeof name === "string" ? name : "");
+        return fs.readdirSync(root).map(e => new index_2.default(path.resolve(root, e)));
+    }
+}
 exports.default = Dir;

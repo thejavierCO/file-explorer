@@ -22,11 +22,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var fs = __importStar(require("fs"));
-var lastElement_1 = __importDefault(require("../lastElement"));
-var index_1 = __importDefault(require("../make/index"));
-var File = (function () {
-    function File(root) {
+const fs = __importStar(require("fs"));
+const lastElement_1 = __importDefault(require("../lastElement"));
+const index_1 = __importDefault(require("../make/index"));
+class File {
+    constructor(root) {
         this.root = "";
         this.name = "";
         this.type = "file";
@@ -34,9 +34,8 @@ var File = (function () {
         this.root = root;
         this.name = lastElement_1.default(root.split("\\"));
     }
-    File.prototype.read = function () {
+    read() {
         return fs.readFileSync(this.root, { encoding: "utf8" }).split("\n");
-    };
-    return File;
-}());
+    }
+}
 exports.default = File;

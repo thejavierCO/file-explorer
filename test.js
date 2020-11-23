@@ -3,7 +3,7 @@ let fb = require("./src/index");
 let dir = new fb("./play/test");
 let file = new fb("./play/text.txt");
 
-console.log(dir)
+console.log(dir.read())
 // home.set("testing");
 // makedir.set((a)=>{
 //     console.log(a)
