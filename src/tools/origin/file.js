@@ -1,17 +1,16 @@
-const path = require("path");
-const lastElement = require("../lastElement")
-const fs = require("fs");
-
-class File{
-    constructor(root,manager){
+"use strict";
+exports.__esModule = true;
+var path = require("path");
+var fs = require("fs");
+var lastElement_1 = require("../lastElement");
+var File = /** @class */ (function () {
+    function File(root, manager) {
+        var _this = this;
         this.type = "file";
         this._root = root;
-        this.name = lastElement(root.split("\\"))
-        this.read = (options)=>fs.readFileSync(path.resolve(this._root),options)
+        this.name = lastElement_1["default"](root.split("\\"));
+        this.read = function (options) { return fs.readFileSync(path.resolve(_this._root), options); };
     }
-    get root(){
-        return this._root;
-    }
-}
-
-module.exports = File;
+    return File;
+}());
+exports["default"] = File;

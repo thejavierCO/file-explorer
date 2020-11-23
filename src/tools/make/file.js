@@ -1,11 +1,17 @@
-class fileBase{
-    constructor(root=""){
+"use strict";
+exports.__esModule = true;
+var path = require("path");
+var lastElement_1 = require("../lastElement");
+var fileBase = /** @class */ (function () {
+    function fileBase(root) {
+        var _this = this;
+        if (root === void 0) { root = ""; }
         root = path.join(root);
-        this.name = lastElement(root.split("\\"));
+        this.name = lastElement_1["default"](root.split("\\"));
         this.type = "file";
         this._content = "";
-        this.read = ()=>this._content;
+        this.read = function () { return _this._content; };
     }
-}
-
-module.exports = fileBase;
+    return fileBase;
+}());
+exports["default"] = fileBase;
