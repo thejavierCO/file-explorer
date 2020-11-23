@@ -2,11 +2,11 @@
 exports.__esModule = true;
 var path_1 = require("path");
 var fs_1 = require("fs");
-var file_1 = require("../ts/tools/origin/file");
-var dir_1 = require("../ts/tools/origin/dir");
-var is_1 = require("../ts/tools/is");
-var lastElement_1 = require("../ts/tools/lastElement");
-var index_1 = require("../ts/tools/make/index");
+var file_1 = require("./tools/origin/file");
+var dir_1 = require("./tools/origin/dir");
+var is_1 = require("./tools/is");
+var lastElement_1 = require("./tools/lastElement");
+var index_1 = require("./tools/make/index");
 var fileBrowser = /** @class */ (function () {
     function fileBrowser(root) {
         if (root === void 0) { root = path_1["default"].resolve("./"); }

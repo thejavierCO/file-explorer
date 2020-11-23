@@ -1,10 +1,32 @@
-const path = require("path");
-const fs = require("fs");
-const lastElement = require("../lastElement");
-const is = require("../is");
+import path from "path";
+import fs from "fs";
+import lastElement from "../lastElement";
+import is from "../is"
+import { dir } from "console";
 
-class Dir{
-    constructor(root,manager){
+interface IDir{
+    type:string
+    _root:string
+    name:string
+    set:(name:any)=>any
+    get:(name:any)=>any
+    del:(name:any)=>any
+    read:(name:any)=>any
+    add:(name:any)=>any
+    filter:(condicion:Function,name:string)=>object
+}
+
+class Dir implements IDir{
+    type = ""
+    _root = ""
+    name = ""
+    set:(name:any)=>any
+    get:(name:any)=>any
+    del:(name:any)=>any
+    read:(name:any)=>any
+    add:(name:any)=>any
+    filter:(condicion:Function,name:string)=>object
+    constructor(root:string,manager:any){
         this.type = "dir";
         this._root = root;
         this.name = lastElement(root.split("\\"))
@@ -24,7 +46,7 @@ class Dir{
                     throw {error:"not defined name",path:a}
                 })(path.resolve(this._root))
             );
-        this.get = (name)=>name?(
+        this.get = (name:any)=>name?(
                 is(name)==="function"?
                 name(this)
                 :fs.existsSync(path.resolve(this._root,name))?
@@ -39,7 +61,7 @@ class Dir{
                     throw {error:"not defined name",path:a}
                 })(path.resolve(this._root))
             );
-        this.del = (name)=>name?(
+        this.del = (name:any)=>name?(
             fs.existsSync(path.resolve(this._root,name))?
             fs.rmdirSync(path.resolve(this._root,name)):
             ((a)=>{
@@ -52,14 +74,14 @@ class Dir{
                 throw {error:"not exist directory",path:a}
             })(path.resolve(this._root))
         );
-        this.read = (name)=>name?(
+        this.read = (name:any)=>name?(
             ((a)=>fs.readdirSync(a).map(e=>({...new manager(path.resolve(a,e))})))
             (path.resolve(this._root,name))
         ):(
             ((a)=>fs.readdirSync(a).map(e=>({...new manager(path.resolve(a,e))})))
             (path.resolve(this._root))
         );
-        this.add = (element)=>{
+        this.add = (element:any)=>{
             if(is(element)==="object"){
                 let {type,name} = element;
                 switch(type){
@@ -68,14 +90,14 @@ class Dir{
                     break;
                     case "dir":
                         if(!fs.existsSync(element.root)){
-                            this.set(name).set((a)=>{
-                                element.read().map(e=>{
+                            this.set(name).set((a:any)=>{
+                                element.read().map((e:any)=>{
                                     a.add(e)
                                 })
                             })
                         }else{
-                            this.get(name).set((a)=>{
-                                element.read().map(e=>{
+                            this.get(name).set((a:any)=>{
+                                element.read().map((e:any)=>{
                                     a.add(e)
                                 })
                             })
@@ -89,12 +111,12 @@ class Dir{
         }
         this.filter = (condicion,name)=>this.read(name).filter(condicion)
     }
-    set root(a){
-        return this._root = a;
+    set root(a:string){
+        this._root = a;
     }
     get root(){
         return this._root;
     }
 }
 
-module.exports = Dir;
+export default Dir;
