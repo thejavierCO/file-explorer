@@ -3,17 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "typings": "./src/FileBrowser/index.d.ts",
+  "typings": "src/index.d.ts",
   "scripts": {
-    "test": "node test.js",
-    "dev":"tsc -p tsconfig.json -w"
+    "start": "f:/cmd/node/nodemon index.js",
+    "dev": "f:/cmd/node/tsc ts/index.ts --outDir src --target ES6 -w"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "execa": "^4.1.0",
-    "fs-extra": "^9.0.1"
+    "execa": "^4.1.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.9"
