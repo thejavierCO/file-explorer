@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node test.js",
-    "dev":"tsc ts/index.ts --outDir ./src -w -target ES5"
+    "dev":"tsc ts/index.ts -w"
   },
   "keywords": [],
   "author": "",
