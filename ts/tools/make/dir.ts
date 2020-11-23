@@ -1,11 +1,15 @@
-const path = require("path");
-const make = require("./index");
+import * as path from "path";
+import make from "./index";
+import lastElement from "../lastElement"
+import is from "../is";
+
+type data = any
 
 class dirBase{
     name:string
     root:string
     type:string
-    _content:[]
+    _content:Array<data>
     constructor(root=""){
         root = path.join(root);
         this.name = lastElement(root.split("\\"));
@@ -16,7 +20,7 @@ class dirBase{
     set(name:any){
         if(!name)throw {error:"not defined name"}
         if(is(name,false)==="string"){
-            let elem:{name:string,type:string,root:string} = new make(path.join(this.root,name));
+            let elem:data = new make(path.join(this.root,name));
             if(this.filter(e=>e.name==elem.name&&e.type==elem.type).length === 0){
                 elem.root = path.join(this.root,name)
                 this._content.push(elem);
@@ -36,7 +40,7 @@ class dirBase{
     }
     get(name:string){
         if(!name)throw {error:"not defined name"}
-        let elem = new make(name,path.join(this.root,name));
+        let elem:data = new make(name,path.join(this.root,name));
         if(this.filter(e=>e.name==elem.name&&e.type==elem.type).length === 1){
             return elem;
         }else{
@@ -45,14 +49,14 @@ class dirBase{
     }
     read(name:string){
         if(!name)return this._content;
-        let elem:object = new make(name,path.join(this.root,name));
+        let elem:data = new make(name,path.join(this.root,name));
         if(this.filter(e=>e.name==elem.name&&e.type==elem.type).length === 1){
             return this.filter(e=>e.name==elem.name&&e.type==elem.type)[0];
         }else{
             throw {error:"not exist "+elem.type}
         }
     }
-    filter(condicion:string){
+    filter(condicion:(a:{name:string,type:string,root:string})=>boolean){
         return this._content.filter(condicion);
     }
 }

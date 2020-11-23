@@ -1,6 +1,6 @@
-import path from "path";
+import * as path from "path";
+import * as fs from "fs";
 import lastElement from "../lastElement"
-import fs from "fs";
 
 class File{
     type:string
@@ -12,9 +12,6 @@ class File{
         this._root = root;
         this.name = lastElement(root.split("\\"))
         this.read = (options)=>fs.readFileSync(path.resolve(this._root),options)
-    }
-    get root(){
-        return this._root;
     }
 }
 

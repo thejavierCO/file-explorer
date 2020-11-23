@@ -11,8 +11,8 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
-var path_1 = require("path");
-var fs_1 = require("fs");
+var path = require("path");
+var fs = require("fs");
 var lastElement_1 = require("../lastElement");
 var is_1 = require("../is");
 var Dir = /** @class */ (function () {
@@ -26,37 +26,37 @@ var Dir = /** @class */ (function () {
         this.name = lastElement_1["default"](root.split("\\"));
         this.set = function (name) { return name ? (is_1["default"](name) === "function" ?
             name(_this)
-            : !fs_1["default"].existsSync(path_1["default"].resolve(_this._root, name)) ?
+            : !fs.existsSync(path.resolve(_this._root, name)) ?
                 (function (a) {
-                    fs_1["default"].mkdirSync(a);
+                    fs.mkdirSync(a);
                     return new manager(a);
-                })(path_1["default"].resolve(_this._root, name))
+                })(path.resolve(_this._root, name))
                 : (function (a) {
                     throw { error: "exist directory", path: a };
-                })(path_1["default"].resolve(_this._root, name))) : ((function (a) {
+                })(path.resolve(_this._root, name))) : ((function (a) {
             throw { error: "not defined name", path: a };
-        })(path_1["default"].resolve(_this._root))); };
+        })(path.resolve(_this._root))); };
         this.get = function (name) { return name ? (is_1["default"](name) === "function" ?
             name(_this)
-            : fs_1["default"].existsSync(path_1["default"].resolve(_this._root, name)) ?
+            : fs.existsSync(path.resolve(_this._root, name)) ?
                 (function (a) {
                     return new manager(a);
-                })(path_1["default"].resolve(_this._root, name)) :
+                })(path.resolve(_this._root, name)) :
                 (function (a) {
                     throw { error: "not exist directory", path: a };
-                })(path_1["default"].resolve(_this._root, name))) : ((function (a) {
+                })(path.resolve(_this._root, name))) : ((function (a) {
             throw { error: "not defined name", path: a };
-        })(path_1["default"].resolve(_this._root))); };
-        this.del = function (name) { return name ? (fs_1["default"].existsSync(path_1["default"].resolve(_this._root, name)) ?
-            fs_1["default"].rmdirSync(path_1["default"].resolve(_this._root, name)) :
+        })(path.resolve(_this._root))); };
+        this.del = function (name) { return name ? (fs.existsSync(path.resolve(_this._root, name)) ?
+            fs.rmdirSync(path.resolve(_this._root, name)) :
             (function (a) {
                 throw { error: "not exist directory", path: a };
-            })(path_1["default"].resolve(_this._root, name))) : (fs_1["default"].existsSync(path_1["default"].resolve(_this._root)) ?
-            fs_1["default"].rmdirSync(path_1["default"].resolve(_this._root)) :
+            })(path.resolve(_this._root, name))) : (fs.existsSync(path.resolve(_this._root)) ?
+            fs.rmdirSync(path.resolve(_this._root)) :
             (function (a) {
                 throw { error: "not exist directory", path: a };
-            })(path_1["default"].resolve(_this._root))); };
-        this.read = function (name) { return name ? ((function (a) { return fs_1["default"].readdirSync(a).map(function (e) { return (__assign({}, new manager(path_1["default"].resolve(a, e)))); }); })(path_1["default"].resolve(_this._root, name))) : ((function (a) { return fs_1["default"].readdirSync(a).map(function (e) { return (__assign({}, new manager(path_1["default"].resolve(a, e)))); }); })(path_1["default"].resolve(_this._root))); };
+            })(path.resolve(_this._root))); };
+        this.read = function (name) { return name ? ((function (a) { return fs.readdirSync(a).map(function (e) { return (__assign({}, new manager(path.resolve(a, e)))); }); })(path.resolve(_this._root, name))) : ((function (a) { return fs.readdirSync(a).map(function (e) { return (__assign({}, new manager(path.resolve(a, e)))); }); })(path.resolve(_this._root))); };
         this.add = function (element) {
             if (is_1["default"](element) === "object") {
                 var type = element.type, name_1 = element.name;
@@ -65,7 +65,7 @@ var Dir = /** @class */ (function () {
                         // return fse.moveSync(path.resolve(_root),path.resolve(root))
                         break;
                     case "dir":
-                        if (!fs_1["default"].existsSync(element.root)) {
+                        if (!fs.existsSync(element.root)) {
                             _this.set(name_1).set(function (a) {
                                 element.read().map(function (e) {
                                     a.add(e);
@@ -89,16 +89,6 @@ var Dir = /** @class */ (function () {
         };
         this.filter = function (condicion, name) { return _this.read(name).filter(condicion); };
     }
-    Object.defineProperty(Dir.prototype, "root", {
-        get: function () {
-            return this._root;
-        },
-        set: function (a) {
-            this._root = a;
-        },
-        enumerable: false,
-        configurable: true
-    });
     return Dir;
 }());
 exports["default"] = Dir;

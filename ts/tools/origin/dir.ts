@@ -1,8 +1,7 @@
-import path from "path";
-import fs from "fs";
+import * as path from "path";
+import * as fs from "fs";
 import lastElement from "../lastElement";
 import is from "../is"
-import { dir } from "console";
 
 interface IDir{
     type:string
@@ -110,12 +109,6 @@ class Dir implements IDir{
             }
         }
         this.filter = (condicion,name)=>this.read(name).filter(condicion)
-    }
-    set root(a:string){
-        this._root = a;
-    }
-    get root(){
-        return this._root;
     }
 }
 
