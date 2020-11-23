@@ -1,5 +1,6 @@
 import * as fs from "fs"
-import fb from "../FileBowser/index"
+import fb from "./fileBrowser"
+import Ifb from "./fileSystem"
 import Imake from "./make"
 
 interface directory {

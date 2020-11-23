@@ -1,6 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function is(element, fs = true) {
+function is(element, fs) {
+    if (fs === void 0) { fs = true; }
     if (typeof element === "object" && element.length > 0) {
         return "array";
     }
@@ -21,4 +20,4 @@ function is(element, fs = true) {
         return typeof element;
     }
 }
-exports.default = is;
+exports["default"] = is;

@@ -4,9 +4,11 @@ import file from "../tools/origin/file";
 import dir from "../tools/origin/dir";
 import is from "../tools/is";
 import lastElement from "../tools/lastElement";
+import Ifb from "../Types/fileBrowser"
+import Ifs from "../Types/fileSystem"
 
-class fileBrowser{
-    constructor(root:any=path.resolve("./")){
+class fileBrowser implements Ifb{
+    constructor(root:string=path.resolve("./")){
         root = path.resolve(is(root,false)==="string"?root:"./");
         if(fs.existsSync(path.resolve(typeof root === "string"?root:"./"))){
             if(is(lastElement(root.split("\\")))==="file"){

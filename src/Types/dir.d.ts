@@ -1,4 +1,4 @@
-import fb from "../FileBowser/index";
+import fb from "./fileBrowser";
 import Imake from "./make";
 interface directory {
     root: string;
