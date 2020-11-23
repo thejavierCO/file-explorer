@@ -1,6 +1,7 @@
 let fb = require("./src/index");
 
-let home = new fb("./testing");
+let home = new fb("./");
+console.log(home)
 // home.set("testing");
 // makedir.set((a)=>{
 //     console.log(a)

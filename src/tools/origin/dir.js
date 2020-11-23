@@ -1,8 +1,8 @@
 const path = require("path");
 const fs = require("fs");
-const lastElement = require("./lastElement")
+const lastElement = require("../lastElement")
 const fse = require("fs-extra");
-const is = require("./is");
+const is = require("../is");
 
 class Dir{
     constructor(root,manager){

@@ -1,5 +1,5 @@
 const path = require("path");
-const lastElement = require("./lastElement")
+const lastElement = require("../lastElement")
 const fs = require("fs");
 
 class File{
