@@ -1,16 +1,21 @@
 "use strict";
-exports.__esModule = true;
-var path = require("path");
+Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
 var lastElement_1 = require("../lastElement");
+var index_1 = require("../make/index");
 var File = /** @class */ (function () {
-    function File(root, manager) {
-        var _this = this;
+    // read = this._read
+    function File(root) {
+        this.root = "";
+        this.name = "";
         this.type = "file";
-        this._root = root;
-        this.name = lastElement_1["default"](root.split("\\"));
-        this.read = function (options) { return fs.readFileSync(path.resolve(_this._root), options); };
+        this.make = index_1.default;
+        this.root = root;
+        this.name = lastElement_1.default(root.split("\\"));
     }
+    File.prototype.read = function () {
+        return fs.readFileSync(this.root, { encoding: "utf8" }).split("\n");
+    };
     return File;
 }());
-exports["default"] = File;
+exports.default = File;

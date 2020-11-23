@@ -1,18 +1,23 @@
-// import * as path from "path";
-// import * as fs from "fs";
-// import lastElement from "../lastElement"
+import * as path from "path";
+import * as fs from "fs";
+import IFile from "../../Types/file"
+import lastElement from "../lastElement"
+import make from "../make/index";
+import is from "../is";
 
-class File{
-    // type:string
-    // _root:string
-    // name:string
-    // read:(options:object)=>any
-    // constructor(root:string,manager:any){
-    //     this.type = "file";
-    //     this._root = root;
-    //     this.name = lastElement(root.split("\\"))
-    //     this.read = (options)=>fs.readFileSync(path.resolve(this._root),options)
-    // }
+class File implements IFile{
+    root = "";
+    name = "";
+    type = "file";
+    make = make;
+    // read = this._read
+    constructor(root:string){
+        this.root = root;
+        this.name = lastElement(root.split("\\"))
+    }
+    read(){
+        return fs.readFileSync(this.root,{encoding:"utf8"}).split("\n")
+    }
 }
 
 export default File;
