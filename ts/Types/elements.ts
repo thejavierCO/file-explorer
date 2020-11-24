@@ -28,8 +28,8 @@ export type dir = {
     root:string
     type:string
     content:contentDir
-    set:(name:string)=>explorer
-    get:(name?:string)=>explorer
+    set:(name:string)=>explorer|undefined
+    get:(name:string)=>explorer
     del:(name:string)=>msg
     add:(model:object)=>create
     read:(namedir:string)=>contentDir

@@ -62,10 +62,51 @@ export class dirObject implements dir{
         this.root = root;
         this.name = getLast(root.split("\\"))
     }
-    set = (name: string | Function) => {}
-    get = (name?: string | undefined) => {}
-    del = (name?: string) => {}
-    add = (model: object) => {}
+    set = (name: string | Function) => {
+        if(typeof name === "string"){
+            if(!fs.existsSync(path.resolve(this.root,name))){
+                fs.mkdirSync(path.resolve(this.root,name))
+                return new explorer(path.resolve(this.root,name))
+            }else{
+                throw new Error("exist directory in:\n"+path.resolve(this.root,name));
+            }
+        }else if(typeof name === "function"){
+            name(this);
+        }else{
+            throw new Error("require string and function")
+        }
+    }
+    get = (name: string) => {
+        if(typeof name === "string"){
+            if(fs.existsSync(path.resolve(this.root,name))){
+                return new explorer(path.resolve(this.root,name))
+            }else{
+                throw new Error("exist directory in:\n"+path.resolve(this.root,name));
+            }
+        }else{
+            throw new Error("require string and function")
+        }
+    }
+    del = (name?: string) => {
+        if(!name&&typeof name === "string"){
+            fs.rmdirSync(path.resolve(this.root,name));
+            return {
+                root:this.root,
+                status:true,
+                message:"test"
+            }
+        }else{
+            fs.rmdirSync(path.resolve(this.root));
+            return {
+                root:this.root,
+                status:true,
+                message:"test"
+            }
+        }
+    }
+    add = (model: object) => {
+        
+    }
     read = (name?:string) => 
     fs.readdirSync(path.resolve(this.root,name?name:""))
     .map(subname=>new explorer(path.resolve(this.root,name?name:"",subname)))

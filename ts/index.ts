@@ -17,4 +17,4 @@ class fileExplorer implements Imain{
     explorer = ()=>new explorer(this.root);
 }
 
-module.exports = fileExplorer
+module.exports = fileExplorer;

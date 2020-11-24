@@ -1,9 +1,9 @@
 const fileBrowser = require("./src/index")
-let config = new fileBrowser("./");
+let config = new fileBrowser("./play");
 
 let main = config.explorer();
 
 console.log(
     main.read(),
-    main.read("ts")
+    main.set("play1")
 )
