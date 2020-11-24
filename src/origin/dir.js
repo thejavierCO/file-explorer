@@ -39,19 +39,44 @@ class Dir{
                     throw {error:"not defined name",path:a}
                 })(path.resolve(this._root))
             );
-        this.del = (name)=>name?(
-            fs.existsSync(path.resolve(this._root,name))?
-            fs.rmdirSync(path.resolve(this._root,name)):
-            ((a)=>{
-                throw {error:"not exist directory",path:a}
-            })(path.resolve(this._root,name))
-        ):(
-            fs.existsSync(path.resolve(this._root))?
-            fs.rmdirSync(path.resolve(this._root)):
-            ((a)=>{
-                throw {error:"not exist directory",path:a}
-            })(path.resolve(this._root))
-        );
+        this.del = (name,options={subdirectory:false})=>{
+            try{
+                return fs.existsSync(path.resolve(this._root,name?name:""))?
+                (
+                    (root)=>{
+                        if(subdirectory===true){
+                            throw {errno:-4051,code:"ENOTEMPTY"}
+                        }else{
+                            fs.rmdirSync(root)
+                        }
+                        return {del:root}
+                    }
+                )(path.resolve(this._root,name?name:""))
+                :(
+                    (root)=>{
+                        throw "not exist directory\n root: "+root;
+                    }
+                )(path.resolve(this._root,name?name:""));
+            }catch(err){
+                console.log(err)
+                if(err.errno === -4051&&err.code === "ENOTEMPTY"){
+                    let {subdirectory} = options;
+                    if(subdirectory===true&&this.read().length>0){
+                        this.read().map(e=>{
+                            console.log("delete "+e.type+" in "+e._root);
+                            e.del();
+                        })
+                    }else{
+                        return {
+                            status:false,
+                            message:"directory not empty"
+                        }
+                    }
+                }else{
+                    throw {error:err}
+                }
+            }
+        };
         this.read = (name)=>name?(
             ((a)=>fs.readdirSync(a).map(e=>({...new manager(path.resolve(a,e))})))
             (path.resolve(this._root,name))

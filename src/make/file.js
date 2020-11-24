@@ -1,4 +1,5 @@
 const path = require("path");
+const fileBrowser = require("..");
 const lastElement = require("../tools/lastElement");
 
 class fileBase{
@@ -11,4 +12,4 @@ class fileBase{
     }
 }
 
-export default fileBase;
+module.exports = fileBase

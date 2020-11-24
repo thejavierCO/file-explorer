@@ -26,7 +26,7 @@ class dirBase{
         }else if(is(name)==="function"){
             let data = name(this)
             if(is(data)!=="undefined"&&data!==""){
-                console.log(data);
+                console.log(data,20);
             }
             return this;
         }else{
