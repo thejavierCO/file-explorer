@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "typings": "src/index.d.ts",
+  "typings": "index.d.ts",
   "scripts": {
-    "start": "f:/cmd/node/nodemon index.js",
-    "dev": "f:/cmd/node/tsc ts/index.ts --outDir src --target ES6 -w"
+    "tsc": "tsc",
+    "nodemon": "nodemon",
+    "start": "nodemon index.js",
+    "dev": "tsc -p tsconfig.json -w"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +17,8 @@
     "execa": "^4.1.0"
   },
   "devDependencies": {
-    "@types/node": "^14.14.9"
+    "@types/node": "^14.14.9",
+    "nodemon": "^2.0.6",
+    "typescript": "^4.1.2"
   }
 }
