@@ -1,10 +1,10 @@
 let path = require("path");
 let fs = require("fs");
-let file = require("./tools/origin/file");
-let dir = require("./tools/origin/dir");
+let file = require("./origin/file");
+let dir = require("./origin/dir");
 let is = require("./tools/is");
 let lastElement = require("./tools/lastElement");
-let make = require("./tools/make");
+let make = require("./make/idk");
 
 class fileBrowser{
     constructor(root=path.resolve("./")){

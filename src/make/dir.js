@@ -1,18 +1,21 @@
 const path = require("path");
-const make = require("./index");
+const make = require("./idk/index");
+const lastElement = require("../tools/lastElement");
+const is = require("../tools/is");
 
 class dirBase{
-    constructor(root=""){
+    constructor(root="",make){
         root = path.join(root);
         this.name = lastElement(root.split("\\"));
         this.root = path.join(root);
         this.type = "dir";
         this._content = [];
+        this.father = make
     }
     set(name){
         if(!name)throw {error:"not defined name"}
         if(is(name,false)==="string"){
-            let elem = new make(path.join(this.root,name));
+            let elem = new this.father(path.join(this.root,name));
             if(this.filter(e=>e.name==elem.name&&e.type==elem.type).length === 0){
                 elem.root = path.join(this.root,name)
                 this._content.push(elem);
@@ -32,7 +35,7 @@ class dirBase{
     }
     get(name){
         if(!name)throw {error:"not defined name"}
-        let elem = new make(name,path.join(this.root,name));
+        let elem = new this.father(name,path.join(this.root,name));
         if(this.filter(e=>e.name==elem.name&&e.type==elem.type).length === 1){
             return elem;
         }else{
@@ -41,7 +44,7 @@ class dirBase{
     }
     read(name){
         if(!name)return this._content;
-        let elem = new make(name,path.join(this.root,name));
+        let elem = new this.father(name,path.join(this.root,name));
         if(this.filter(e=>e.name==elem.name&&e.type==elem.type).length === 1){
             return this.filter(e=>e.name==elem.name&&e.type==elem.type)[0];
         }else{

@@ -1,3 +1,6 @@
+const path = require("path");
+const lastElement = require("../tools/lastElement");
+
 class fileBase{
     constructor(root=""){
         root = path.join(root);
