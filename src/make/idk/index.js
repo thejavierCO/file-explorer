@@ -20,5 +20,4 @@ class make{
         }
     }
 }
-
-module.exports = make;
+exports.default = make;
