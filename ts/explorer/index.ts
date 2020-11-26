@@ -36,7 +36,7 @@ export class explorer implements Iexplorer{
         if(!name)throw {error:"not defined name",in:"set explorer"}
         else return getType(this).set(name)
     }
-    read = (name?:string)=>getType(this).read(name)
+    read = ()=>getType(this).read()
     del = (name?:string)=>getType(this).del(name)
     add = (model:create)=>{
         if(!model)throw {error:"not defined name",in:"set explorer"}

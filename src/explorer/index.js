@@ -16,7 +16,7 @@ class explorer {
             else
                 return tools_1.getType(this).set(name);
         };
-        this.read = (name) => tools_1.getType(this).read(name);
+        this.read = () => tools_1.getType(this).read();
         this.del = (name) => tools_1.getType(this).del(name);
         this.add = (model) => {
             if (!model)

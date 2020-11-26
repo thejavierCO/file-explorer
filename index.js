@@ -1,8 +1,8 @@
 const {fileExplorer} = require("./src/index");
 
-let admin = new fileExplorer();
+let admin = new fileExplorer("./ts");
 
 console.log([
-    admin.explorer().get("ts").get("explorer").get("index.ts").read(),
+    admin.explorer().read(),
     // admin.create()
 ])

@@ -8,6 +8,7 @@ export interface file {
     root: string | undefined;
     type: string | undefined;
     name: string | undefined;
+    extension: string | undefined;
     get: (name: string) => any;
     set: (name: string) => any;
     read: (name?: string) => any;
@@ -20,7 +21,7 @@ export interface dir {
     name: string | undefined;
     get: (name: string) => any;
     set: (name: string) => any;
-    read: (name?: string) => any;
+    read: () => any;
     del: (name?: string) => any;
     add: (model: create) => any;
 }
@@ -28,10 +29,11 @@ export declare class fileObject implements file {
     root: string | undefined;
     type: string | undefined;
     name: string | undefined;
+    extension: string | undefined;
     constructor(exp: explorer | create);
     get: (name: string) => void;
     set: (name: string) => void;
-    read: (name?: string | undefined) => void;
+    read: () => string[];
     del: (name?: string | undefined) => void;
     add: (model: create) => void;
 }

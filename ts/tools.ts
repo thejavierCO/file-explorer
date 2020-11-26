@@ -27,6 +27,7 @@ export interface file{
     root:string|undefined
     type:string|undefined
     name:string|undefined
+    extension:string|undefined
     get:(name:string)=>any
     set:(name:string)=>any
     read:(name?:string)=>any
@@ -40,7 +41,7 @@ export interface dir{
     name:string|undefined;
     get:(name:string)=>any
     set:(name:string)=>any
-    read:(name?:string)=>any
+    read:()=>any
     del:(name?:string)=>any
     add:(model:create)=>any
 }
@@ -49,14 +50,24 @@ export class fileObject implements file{
     root:string|undefined
     type:string|undefined
     name:string|undefined;
+    extension:string|undefined
     constructor(exp:explorer|create){
         this.type = "file";
         this.root = exp.root;
         this.name = lastItem(exp.root.split("\\"))
+        this.extension = lastItem(exp.root.split("\\")).split(".")[0]
     }
     get=(name:string)=>{}
     set=(name:string)=>{}
-    read=(name?:string)=>{}
+    read=()=>{
+        if(existPath(this.root)&&this.root){
+            return fs.readFileSync(this.root)
+            .toString()
+            .split("\n");
+        }else{
+            throw {error:"not exist rooot"}
+        }
+    }
     del=(name?:string)=>{}
     add=(model:create)=>{}
 }

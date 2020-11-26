@@ -48,12 +48,22 @@ class fileObject {
     constructor(exp) {
         this.get = (name) => { };
         this.set = (name) => { };
-        this.read = (name) => { };
+        this.read = () => {
+            if (existPath(this.root) && this.root) {
+                return fs.readFileSync(this.root)
+                    .toString()
+                    .split("\n");
+            }
+            else {
+                throw { error: "not exist rooot" };
+            }
+        };
         this.del = (name) => { };
         this.add = (model) => { };
         this.type = "file";
         this.root = exp.root;
         this.name = lastItem(exp.root.split("\\"));
+        this.extension = lastItem(exp.root.split("\\")).split(".")[0];
     }
 }
 exports.fileObject = fileObject;

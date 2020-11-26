@@ -18,7 +18,7 @@ export declare class explorer implements Iexplorer {
     write?: ((data: string) => string | string[]) | undefined;
     get: (name: string) => void | explorer;
     set: (name: string) => void;
-    read: (name?: string | undefined) => void | explorer[];
+    read: () => string[] | explorer[];
     del: (name?: string | undefined) => void;
     add: (model: create) => void;
     get type(): string;
