@@ -1,9 +1,8 @@
-const fileBrowser = require("./src/index")
-let config = new fileBrowser("./play");
+const {fileExplorer} = require("./src/index");
 
-let main = config.explorer();
+let admin = new fileExplorer();
 
-console.log(
-    main.read(),
-    main.set("play1")
-)
+console.log([
+    admin.explorer().get("ts").get("explorer").get("index.ts").read(),
+    // admin.create()
+])
