@@ -1,30 +1,34 @@
-import {existPath,getRoot,fileObject,dirObject,is} from "./tools"
+import {existPath,getRoot,root,is} from "./tools"
 import {create} from "./create";
 import {explorer} from "./explorer";
 
+
 export interface IfileExplorer{
-    // [x:string]:any
-    // root:string
-    // type:string
-    // file?:fileObject|undefined;
-    // dir?:dirObject|undefined;
-    // create:(root:string)=>create
-    // explorer:()=>explorer
+    root:root|string|undefined;
+    type:"file"|"dir"|"other"|undefined;
+    create:(name:string)=>create
+    explorer:explorer
 }
 
 export class fileExplorer implements IfileExplorer{
-    // root = "";
-    // type = "other";
-    // constructor(root:string=getRoot("./")){
-    //     if(existPath(getRoot(root))){
-    //         this.root = getRoot(root)
-    //         this.type = is(root);
-    //     }else{
-    //         throw {error:"not exist root",root}
-    //     }
-    // }
-    // create = (root:string)=>new create(getRoot(this.root,root?root:""));
-    // explorer = ()=>new explorer(this.root);
+    root;
+    type;
+    constructor(root:string=getRoot("./")){
+        if(existPath(getRoot(root))){
+            this.type = is(root);
+            this.root = getRoot(root);
+        }else{
+            throw {error:"not exist root",root}
+        }
+    }
+    private _create = (name:string)=>new create(getRoot(this.root,name));
+    private _explorer = ()=>new explorer(this.root);
+    get create(){
+        return this._create;
+    }
+    get explorer(){
+        return this._explorer();
+    }
 }
 
 exports.fileExplorer = fileExplorer;

@@ -4,78 +4,77 @@ import {fileExplorer} from "./index";
 import {create} from "./create"
 import {explorer} from "./explorer"
 
-export function getRoot(...name:Array<string>){
-    // let root = name.join("/");
-    // return path.resolve(root)
+export type root = Array<string>
+
+export type model = fileModel|dirModel;
+
+export type fileContent = Array<string>;
+
+export type dirContent = Array<explorer>|Array<create>;
+
+export function getRoot(...name:root):string{
+    let root = name.join("/");
+    return path.resolve(root);
 }
 
-export function existPath(root:string=getRoot()){
-    // return fs.existsSync(root)
+export function existPath(root:string):boolean{
+    return fs.existsSync(root)
 }
 
-export function lastItem(element:Array<string>){
-    // return element[element.length-1];
+export function lastItem(element:root):any|string|undefined{
+    return element[element.length-1];
 }
 
-export function is(element:string){
-    // element = lastItem(element.split("\\"));
-    // if(/([.]([\w\d]{0,}))/i.test(element))return "file";
-    // else return "dir";
+export function is(element:string):"file"|"dir"|"other"{
+    element = lastItem(element.split("\\"));
+    if(/([.]([\w\d]{0,}))/i.test(element))return "file";
+    else if(!/([.]([\w\d]{0,}))/i.test(element))return "dir";
+    else return "other";
 }
 
 export interface file{
-    // root:string|undefined
-    // type:string|undefined
-    // name:string|undefined
-    // extension:string|undefined
-    // get:(name:string)=>any
-    // set:(name:string|Function)=>any
-    // read:(name?:string)=>any
-    // del:(name?:string)=>any
-    // add:(model:create)=>any
+    // root:string|undefined;
+    // type:string|undefined;
+    // name:string|undefined;
+    // extension:string|undefined;
+    // content:fileContent;
+    // del:()=>any
 }
 
 export interface dir{
-    // root:string|undefined
-    // type:string|undefined
+    // root:string|undefined;
+    // type:string|undefined;
     // name:string|undefined;
-    // get:(name:string)=>any
-    // set:(name:string|Function)=>any
-    // read:()=>any
+    // content:dirContent;
     // del:(name?:string)=>any
-    // add:(model:create)=>any
 }
 
 export class fileObject implements file{
-    // private _root:string|undefined
-    // private _type:string|undefined
+    // private _root:string|undefined;
+    // private _type:string|undefined;
     // private _name:string|undefined;
-    // private _extension:string|undefined
+    // private _extension:string|undefined;
     // constructor(exp:explorer|create){
     //     this._type = "file";
     //     this._root = exp.root;
     //     this._name = lastItem(exp.root.split("\\"))
     //     this._extension = lastItem(exp.root.split("\\")).split(".")[0]
     // }
-    // get=(name:string)=>{}
-    // set=(name:string|((data:any)=>any),data:string)=>{
-    //     if(!this.root)throw {error:"not defined root"}
-    //     if(!name)throw {error:"not defined name"}
-    //     if(typeof name === "function")return name(this)?"true":"false";
-    //     fs.appendFileSync(getRoot(this.root,name),data);
-    //     return "";
-    // }
-    // read=()=>{
-    //     if(existPath(this.root)&&this.root){
+    // private read=()=>{
+    //     if(typeof this.root === "string"&&existPath(this.root)){
     //         return fs.readFileSync(this.root)
     //         .toString()
     //         .split("\n");
     //     }else{
-    //         throw {error:"not exist rooot"}
+    //         throw {error:"not exist root"}
     //     }
     // }
+    // get=(element:string)=>{
+    //     return this.content.filter(e=>e.indexOf(element)!==-1)
+    // }
     // del=(name?:string)=>{}
-    // add=(model:create)=>{}
+    // private write = ()=>{}
+    // private rename = ()=>{}
     // get root(){
     //     return this._root;
     // }
@@ -85,6 +84,9 @@ export class fileObject implements file{
     // get name(){
     //     return this._name;
     // }
+    // set name(newName){
+    //     console.log(newName,"rename");
+    // }
     // get extension(){
     //     return this._extension;
     // }
@@ -92,23 +94,20 @@ export class fileObject implements file{
     //     return this.read();
     // }
     // set content(data){
-    //     console.log(data)
-    //     if(!this.root)throw {error:"not defined root file"}
-    //     else if(!data)throw {error:"not defined root file"}
-    //     // else fs.writeFileSync(this.root,data[0])
+    //     console.log(data,"write")
     // }
 }
 
 export class dirObject implements dir{
-    // private _root:string|undefined
-    // private _type:string|undefined
-    // private _name:string|undefined;
+    // private _root:string|undefined;
+    // private _type:string|undefined;
+    // protected _name:string|undefined;
     // constructor(exp:explorer|create){
     //     this._type = "dir";
     //     this._root = exp.root;
     //     this._name = lastItem(exp.root.split("\\"));
     // }
-    // get=(name:string)=>{
+    // get=(name:string):explorer|Array<string>=>{
     //     if(this.root){
     //         let root = getRoot(this.root)
     //         if(typeof name === "string"&&this.root){
@@ -120,17 +119,19 @@ export class dirObject implements dir{
     //         throw {error:"not defined root"}
     //     }
     // }
-    // set=(name:string|Function)=>{
+    // set(name:string|Function|create|explorer[]|string[]){
     //     if(!this.root)throw{error:"not defined root"};
     //     if(typeof name === "function")return name(this);
-    //     if(!existPath(getRoot(this.root,name))){
+    //     if(typeof name === "object"){
+    //         return console.log(name)
+    //     }else if(!existPath(getRoot(this.root,name))){
     //         fs.mkdirSync(getRoot(this.root,name));
     //         return this.get(name);
     //     }else{
     //         throw {error:"exist directory"}
     //     }
     // }
-    // read=()=>{
+    // read():dirContent{
     //     if(this.root){
     //         let root = getRoot(this.root)
     //         return fs.readdirSync(root)
@@ -147,11 +148,21 @@ export class dirObject implements dir{
     //         fs.rmdirSync(getRoot(this.root))
     //     }
     // }
-    // add=(model:create)=>{
-    //     console.log(model,"add")
+    // rename(newName:string){
+    //     if(typeof newName === "string"&&this.name&&typeof this.root === "string"){
+    //         if(!existPath(this.root.replace(this.name,newName))){
+    //             fs.renameSync(this.root,this.root.replace(this.name,newName));
+    //             this._root = this.root.replace(this.name,newName);
+    //             this._name = newName;
+    //         }else throw {error:"exist name directory"}
+    //     }else throw {error:"not set name with element type "+typeof newName}
     // }
     // get root(){
     //     return this._root;
+    // }
+    // set root(newRoot){
+    //     if(typeof newRoot === "string")this._root = newRoot;
+    //     else throw {error:"require string"}
     // }
     // get type(){
     //     return this._type;
@@ -159,43 +170,54 @@ export class dirObject implements dir{
     // get name(){
     //     return this._name;
     // }
+    // set name(newName){
+    //     if(typeof newName === "string")this.rename(newName)
+    // }
     // get content(){
     //     return this.read();
     // }
     // set content(data){
-    //     console.log(data)
-    //     if(!this.root)throw {error:"not defined root file"}
-    //     else if(typeof data !== "string")throw {error:"not defined root file"}
-    //     else fs.writeFileSync(this.root,data)
+    //     this.set(data);
     // }
 }
 
 export class fileModel extends fileObject{
-    // private _content:string;
-    // constructor(root:explorer|create){
-    //     super(root);
-    //     this._content = "";
-    // }
-    // get content(){
-    //     return this._content.split("\n")
-    // }
-    // set content(data){
-    //     if(!this.root)throw {error:"not defined root file"}
-    //     else if(typeof data !== "string")throw {error:"not defined root file"}
-    //     else this._content = data;
-    // }
+    constructor(root:explorer|create){
+        super(root);
+        this.content = [];
+    }
 }
 
 export class dirModel extends dirObject{
+    // protected _content:dirContent;
     // constructor(root:explorer|create){
     //     super(root);
+    //     this._content = [];
+    //     this._name = root.name;
+    // }
+    // get(name:string){
+    //     if(this._content)
+    //     return this._content.toString()
+    // }
+    // set(name:Function|create){
+    //     if(typeof name !== "function"&&typeof name === "object"){
+    //         this._content.push(name);
+    //     }
+    //     console.log(name,this,"dirModel");
+    // }
+    // read(){return this._content}
+    // del(name?:string){
+    //     console.log(name,this);
+    // }
+    // rename(newName:string){
+    //     this._name = newName;
     // }
 }
 
-export function getType(exp:explorer){
+export function getType(exp:explorer):fileObject|dirObject{
     // if(!exp.type)throw {error:"not exist type"}
     // if(exp.type==="file"){
-    //     // return new fileObject(exp);
+    //     return new fileObject(exp);
     // }else if(exp.type==="dir"){
     //     return new dirObject(exp);
     // }else{
@@ -203,10 +225,10 @@ export function getType(exp:explorer){
     // }
 }
 
-export function getTypeModel(exp:create){
+export function getTypeModel(exp:create):fileModel|dirModel{
     // if(!exp.type)throw {error:"not exist type"}
     // if(exp.type==="file"){
-    //     // return new fileModel(exp);
+    //     return new fileModel(exp);
     // }else if(exp.type==="dir"){
     //     return new dirModel(exp);
     // }else{
