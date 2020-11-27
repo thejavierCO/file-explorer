@@ -19,52 +19,26 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTypeModel = exports.getType = exports.dirModel = exports.fileModel = exports.dirObject = exports.fileObject = exports.is = exports.lastItem = exports.existPath = exports.getRoot = void 0;
+exports.lastItem = exports.getTypeElement = exports.existRoot = exports.getRoot = void 0;
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
-function getRoot(...name) {
-    let root = name.join("/");
-    return path.resolve(root);
+function getRoot(...root) {
+    return path.resolve(root.join("\\"));
 }
 exports.getRoot = getRoot;
-function existPath(root) {
-    return fs.existsSync(root);
+function existRoot(...root) {
+    return fs.existsSync(getRoot(root.join("\\")));
 }
-exports.existPath = existPath;
+exports.existRoot = existRoot;
+function getTypeElement(element) {
+    if (/[.]([\w\d]{0,})/i.test(element))
+        return "file";
+    else
+        return "dir";
+}
+exports.getTypeElement = getTypeElement;
 function lastItem(element) {
     return element[element.length - 1];
 }
 exports.lastItem = lastItem;
-function is(element) {
-    element = lastItem(element.split("\\"));
-    if (/([.]([\w\d]{0,}))/i.test(element))
-        return "file";
-    else if (!/([.]([\w\d]{0,}))/i.test(element))
-        return "dir";
-    else
-        return "other";
-}
-exports.is = is;
-class fileObject {
-}
-exports.fileObject = fileObject;
-class dirObject {
-}
-exports.dirObject = dirObject;
-class fileModel extends fileObject {
-    constructor(root) {
-        super(root);
-        this.content = [];
-    }
-}
-exports.fileModel = fileModel;
-class dirModel extends dirObject {
-}
-exports.dirModel = dirModel;
-function getType(exp) {
-}
-exports.getType = getType;
-function getTypeModel(exp) {
-}
-exports.getTypeModel = getTypeModel;
 //# sourceMappingURL=tools.js.map
