@@ -19,7 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.dirObject = exports.fileObject = exports.dirFactory = exports.fileFactory = exports.rootSplit = exports.toRoot = exports.lastItem = exports.getTypeElement = exports.existRoot = exports.getRoot = void 0;
+exports.dirObject = exports.fileObject = exports.dirFactory = exports.fileFactory = exports.ObjectType = exports.rootSplit = exports.toRoot = exports.lastItem = exports.getTypeElement = exports.existRoot = exports.getRoot = void 0;
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 const create_1 = require("./create");
@@ -33,6 +33,8 @@ function existRoot(...root) {
 }
 exports.existRoot = existRoot;
 function getTypeElement(element) {
+    if (!element)
+        throw { error: "not defined root" };
     if (/[.]([\w\d]{0,})/i.test(element))
         return "file";
     else
@@ -80,6 +82,18 @@ function rootSplit(element) {
     }
 }
 exports.rootSplit = rootSplit;
+function ObjectType(type, root) {
+    if (!root)
+        throw { error: "require root" };
+    else if (!type)
+        return undefined;
+    else if (type === "dir")
+        return new dirObject(root);
+    else if (type === "file")
+        return new fileObject(root);
+}
+exports.ObjectType = ObjectType;
+;
 class fileFactory {
     constructor(root = "") {
         this._root = "";
@@ -248,10 +262,10 @@ class dirObject extends dirFactory {
     read() {
         if (this.isExist) {
             return fs.readdirSync(this.root)
-                .map(e => new explorer_1.explorer(e));
+                .map((e) => new explorer_1.explorer(e));
         }
         else {
-            return this._content.map(e => new create_1.create(e));
+            return this._content.map((e) => new create_1.create(e.root));
         }
     }
     del(name) {

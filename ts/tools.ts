@@ -4,9 +4,13 @@ import {fileExplorer} from "./index";
 import {create} from "./create";
 import {explorer} from "./explorer";
 
-export type root = string;
+export type root = string|undefined;
 
-export function getRoot(...root:Array<string>):string{
+export type type = "dir"|"file"|undefined;
+
+export type name = string;
+
+export function getRoot(...root:Array<string|undefined>):string{
     return toRoot(root);
 }
 
@@ -15,6 +19,7 @@ export function existRoot(...root:Array<string>):boolean{
 }
 
 export function getTypeElement(element:root):"file"|"dir"{
+    if(!element)throw {error:"not defined root"}
     if(/[.]([\w\d]{0,})/i.test(element))return "file";
     else return "dir";
 }
@@ -38,7 +43,7 @@ export function toRoot(element:root|Array<root>):string{
     }
 }
 
-export function rootSplit(element:root|Array<root>):Array<string>{
+export function rootSplit(element:root|Array<root>):Array<string|root>{
     if(typeof element === "string"){
         if(/\//g.test(element))
         return element.split("/");
@@ -51,6 +56,13 @@ export function rootSplit(element:root|Array<root>):Array<string>{
         throw {error:"not convert root"}
     }
 }
+
+export function ObjectType(type:type,root:root):fileObject|dirObject|undefined{
+    if(!root)throw {error:"require root"}
+    else if(!type)return undefined;
+    else if(type==="dir")return new dirObject(root)
+    else if(type==="file")return new fileObject(root)
+};
 
 export type fileContent = Array<string>
 
@@ -77,7 +89,7 @@ export class fileFactory implements file{
     type:"file"="file";
     extension;
     protected _content:fileContent;
-    constructor(root:string=""){
+    constructor(root:root=""){
         this._root = getRoot(root);
         this._name = lastItem(rootSplit(this._root))
         this.extension = this.getExtension();
@@ -130,7 +142,7 @@ export class dirFactory implements dir{
     _name = "";
     type:"dir"="dir";
     _content:dirContent
-    constructor(root:string){
+    constructor(root:root){
         this.root = getRoot(root);
         this.name = lastItem(rootSplit(this.root))
         this._content = [];
@@ -234,9 +246,9 @@ export class dirObject extends dirFactory implements model{
     protected read(){
         if(this.isExist){
             return fs.readdirSync(this.root)
-            .map(e=>new explorer(e))
+            .map((e:string)=>new explorer(e))
         }else{
-            return this._content.map(e=>new create(e));
+            return this._content.map((e:explorer|create)=>new create(e.root));
         }
     }
     protected del(name:string){
