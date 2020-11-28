@@ -12,18 +12,18 @@ let file = new fb("./play/text.txt");
 
 // home.add(home.make("proyect1").set(a=>{
 //     a.set("del0").set(e=>{
-//         e.set("pipi9").set(e=>{
+//         e.set("p9").set(e=>{
 //             e.set("init")
 //         })
-//         e.set("pipi0").set(e=>{
+//         e.set("p0").set(e=>{
 //             e.set("init")
 //         })
 //     })
 //     a.set("del1").set(e=>{
-//         e.set("pipi9").set(e=>{
+//         e.set("p9").set(e=>{
 //             e.set("init")
 //         })
-//         e.set("pipi0").set(e=>{
+//         e.set("p0").set(e=>{
 //             e.set("init")
 //         })
 //     })
