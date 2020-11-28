@@ -7,7 +7,7 @@
   "scripts": {
     "tsc": "tsc",
     "nodemon": "nodemon",
-    "start": "nodemon index.js",
+    "start": "clear&&nodemon index.js",
     "dev": "tsc -p tsconfig.json -w"
   },
   "keywords": [],

@@ -4,11 +4,34 @@ import {fileExplorer} from "./index";
 import {create} from "./create";
 import {explorer} from "./explorer";
 
+// --------------------------------------tipos----------------------------------
+
 export type root = string|undefined;
 
 export type type = "dir"|"file"|undefined;
 
 export type name = string;
+
+export type fileContent = Array<string|String>
+
+export type dirContent = Array<explorer|create>
+
+export type file = {
+    root:root
+    name:name|root;
+    type:"file"
+    extension:string|undefined;
+    content:fileContent
+}
+
+export type dir = {
+    root:root
+    name:name|root;
+    type:"dir"
+    content:dirContent
+}
+
+// --------------------------------------Utitlidades----------------------------------
 
 export function getRoot(...root:Array<string|undefined>):string{
     return toRoot(root);
@@ -43,7 +66,21 @@ export function toRoot(element:root|Array<root>):string{
     }
 }
 
-export function rootSplit(element:root|Array<root>):Array<string|root>{
+export function isRoot(element:root|Array<root>):boolean{
+    if(typeof element === "string"){
+        if(/\//g.test(element))
+        return true;
+        else if(/(\\)/g.test(element))
+        return true
+        else return false
+    }else if(Array.isArray(element)){
+        return isRoot(element.join("\\"))
+    }else{
+        return false;
+    }
+}
+
+export function rootSplit(element:root|Array<root>):Array<root>{
     if(typeof element === "string"){
         if(/\//g.test(element))
         return element.split("/");
@@ -58,65 +95,76 @@ export function rootSplit(element:root|Array<root>):Array<string|root>{
 }
 
 export function ObjectType(type:type,root:root):fileObject|dirObject|undefined{
-    if(!root)throw {error:"require root"}
+    if(!root)throw {error:"require root"};
     else if(!type)return undefined;
     else if(type==="dir")return new dirObject(root)
     else if(type==="file")return new fileObject(root)
 };
 
-export type fileContent = Array<string>
+// --------------------------------------Class----------------------------------
 
-export type file = {
-    root:root
-    name:string
-    type:"file"
-    extension:string|undefined;
-    content:fileContent
-}
-
-export type dirContent = Array<explorer|create>
-
-export type dir = {
-    root:root
-    name:string
-    type:"dir"
-    content:dirContent
-}
-
-export class fileFactory implements file{
-    _root = "";
-    _name = "";
-    type:"file"="file";
-    extension;
+export class fileModel implements file{
+    
+    //-------- values
+    protected _root = "";
+    protected _name:string|undefined;
     protected _content:fileContent;
-    constructor(root:root=""){
-        this._root = getRoot(root);
-        this._name = lastItem(rootSplit(this._root))
-        this.extension = this.getExtension();
+    protected _extencion:string|undefined;
+    type:"file"="file";
+    //-------- constructor
+
+    constructor(root:root){
+        if(!root)throw {error:"require root"};
+        this.root = root;
+        this.name = root;
+        this.extension = root;
         this._content = [];
     }
-    protected getExtension(){
-        let get = this.name.split(".");
-        if(get.length>1){
-            return get[get.length-1];
-        }else{
-            return undefined;
-        }
+    
+    //-------- methods
+    protected getExtension(name?:string):string|undefined{
+        if(!name)name = this.root;
+        let get = name.split(".");
+        if(get.length>1)return lastItem(get);
+        else return undefined;
     }
-    protected read(){
-        return this._content;
+    protected getName(root?:root):string|undefined{
+        if(!root)return this.getName(this.root);
+        if(typeof root === "string"){
+            console.log(root)
+            let name:string = lastItem(rootSplit(root));
+            let extencion = name.split(".").filter((a,b,c)=>b!==c.length-1);
+            if(extencion.length>0){
+                name = extencion.join(".");
+            }
+            if(isRoot(name)){
+                return undefined;
+            }
+            return name;
+        }else throw {error:"require string"}
     }
-    protected writeLast(data:fileContent){
-        data.map(e=>{
-            this.content.push(e);
-        })
+    protected read(){return this._content;}
+    protected rename(newName:string){return this.getName(getRoot(this._root,newName));}
+    protected write(data:fileContent|string){
+        if(typeof data === "string")return data.split("\n");
+        else if(Array.isArray(data))return data;
+        else return [new String(data)]
+    }
+    writeLast(...data:fileContent){
+        data.map(e=>this.content.push(e));
         return this.content;
     }
-    protected rename(newName:string){
-        return newName;
+    protected newRoot(root:root){
+        if(!root)return this.root;
+        return root;
     }
-    protected write(data:fileContent){
-        return data;
+
+    //-------- getters and setters
+    get extension(){
+        return this._extencion;
+    }
+    set extension(a){
+        this._extencion = this.getExtension(a);
     }
     get content(){
         return this._content = this.read();
@@ -128,57 +176,71 @@ export class fileFactory implements file{
         return this._root;
     }
     set root(a){
-        this._root = a;
+        this._root = getRoot(this.newRoot(a));
     }
     get name(){
-        return this._name;
+        return this.getName(this._name);
     }
     set name(a){
+        if(!a)throw{error:"not defined name"}
+        let base = this.root.split("\\").filter((_,b,c)=>b!==c.length-1)
+        base.push(a);
+        this.root = base.join("\\");
+        this.extension = a;
         this._name = this.rename(a);
     }
 }
-export class dirFactory implements dir{
+export class dirModel implements dir{
+
+    //-------- values
+    
     _root = "";
     _name = "";
     type:"dir"="dir";
-    _content:dirContent
+    _content:dirContent;
+
+    //-------- constructor
+    
     constructor(root:root){
         this.root = getRoot(root);
         this.name = lastItem(rootSplit(this.root))
         this._content = [];
     }
+
+    //-------- methods
+    
     protected read(){return this._content;}
-    protected add(data:dirContent){
-        return data;
-    }
-    protected rename(newName:string){
-        return newName;
-    }
-    protected del(name:string){
-        console.log(this.existElement(name))
-    }
-    protected get(name:string){
-        if(existRoot(getRoot(this.root,name))){
-            this.content.push(new explorer(getRoot(this.root,name)));
-        }else{
-            this.content.push(new create(getRoot(this.root,name)));
-        }
-    }
-    protected set(name:string){
-        if(!existRoot(getRoot(this.root,name))){
-            this.content.push(new explorer(getRoot(this.root,name)));
-        }else{
-            this.content.push(new create(getRoot(this.root,name)));
-        }
-    }
-    protected existElement(name:string){
-        let get = this.content.filter((e:explorer|create)=>e.name===name);
-        if(get.length>1){
-            return true;
-        }else{
-            return false;
-        }
-    }
+    protected add(data:dirContent){return data;}
+    protected rename(newName:string){return newName;}
+
+    // protected del(name:string){
+    //     console.log(this.existElement(name))
+    // }
+    // protected get(name:string){
+    //     if(existRoot(getRoot(this.root,name))){
+    //         this.content.push(new explorer(getRoot(this.root,name)));
+    //     }else{
+    //         this.content.push(new create(getRoot(this.root,name)));
+    //     }
+    // }
+    // protected set(name:string){
+    //     if(!existRoot(getRoot(this.root,name))){
+    //         this.content.push(new explorer(getRoot(this.root,name)));
+    //     }else{
+    //         this.content.push(new create(getRoot(this.root,name)));
+    //     }
+    // }
+    // protected existElement(name:string){
+    //     let get = this.content.filter((e:explorer|create)=>e.name===name);
+    //     if(get.length>1){
+    //         return true;
+    //     }else{
+    //         return false;
+    //     }
+    // }
+
+    //-------- getters and setters
+    
     get content(){
         return this.read();
     }
@@ -203,73 +265,73 @@ export type model = {
     isExist:boolean
 }
 
-export class fileObject extends fileFactory implements model{
+export class fileObject extends fileModel implements model{
     isExist = false;
     constructor(root:string){
         super(root);
         this.isExist = existRoot(root);
     }
-    protected read(){
-        if(this.isExist)return fs.readFileSync(this.root).toString().split("\n")
-        else return this._content;
-    }
-    writeLast(data:fileContent|string){
-        let content = data;
-        if(typeof data === "string")content = data.split("\n");
-        content = this.content.concat(content).join("\n")
-        return this.content = [content];
-    }
-    protected rename(newName:string){
-        if(this.isExist){
-            let newRoot = this.root.replace(this.name,newName);
-            fs.renameSync(this.root,newRoot);
-            this._name = newName;
-            this._root = this._root;
-            return newName;
-        }else return newName;
-    }
-    protected write(data:fileContent){
-        let content = Array.isArray(data)?data.join("\n"):data;
-        if(this.isExist){
-            fs.writeFileSync(this.root,content)
-            return this.read();
-        }else return data;
-    }
+    // protected read(){
+    //     if(this.isExist)return fs.readFileSync(this.root).toString().split("\n")
+    //     else return this._content;
+    // }
+    // writeLast(data:fileContent|string){
+    //     let content = data;
+    //     if(typeof data === "string")content = data.split("\n");
+    //     content = this.content.concat(content).join("\n")
+    //     return this.content = [content];
+    // }
+    // protected rename(newName:string){
+    //     if(this.isExist){
+    //         let newRoot = this.root.replace(this.name,newName);
+    //         fs.renameSync(this.root,newRoot);
+    //         this._name = newName;
+    //         this._root = this._root;
+    //         return newName;
+    //     }else return newName;
+    // }
+    // protected write(data:fileContent){
+    //     let content = Array.isArray(data)?data.join("\n"):data;
+    //     if(this.isExist){
+    //         fs.writeFileSync(this.root,content)
+    //         return this.read();
+    //     }else return data;
+    // }
 }
 
-export class dirObject extends dirFactory implements model{
+export class dirObject extends dirModel implements model{
     isExist = false;
     constructor(root:string){
         super(root);
         this.isExist = existRoot(root);
     }
-    protected read(){
-        if(this.isExist){
-            return fs.readdirSync(this.root)
-            .map((e:string)=>new explorer(e))
-        }else{
-            return this._content.map((e:explorer|create)=>new create(e.root));
-        }
-    }
-    protected del(name:string){
-        console.log(this.existElement(name))
-    }
-    protected get(name:string){
-        console.log(this.existElement(name))
-    }
-    protected set(name:string){
-        console.log(this.existElement(name))
-    }
-    protected add(data:dirContent){
-        return data;
-    }
-    protected rename(newName:string){
-        if(this.isExist){
-            let newRoot = this.root.replace(this.name,newName);
-            fs.renameSync(this.root,newRoot);
-            this._name = newName;
-            this._root = this._root;
-            return newName;
-        }else return newName;
-    }
+    // protected read(){
+    //     if(this.isExist){
+    //         return fs.readdirSync(this.root)
+    //         .map((e:string)=>new explorer(e))
+    //     }else{
+    //         return this._content.map((e:explorer|create)=>new create(e.root));
+    //     }
+    // }
+    // protected del(name:string){
+    //     console.log(this.existElement(name))
+    // }
+    // protected get(name:string){
+    //     console.log(this.existElement(name))
+    // }
+    // protected set(name:string){
+    //     console.log(this.existElement(name))
+    // }
+    // protected add(data:dirContent){
+    //     return data;
+    // }
+    // protected rename(newName:string){
+    //     if(this.isExist){
+    //         let newRoot = this.root.replace(this.name,newName);
+    //         fs.renameSync(this.root,newRoot);
+    //         this._name = newName;
+    //         this._root = this._root;
+    //         return newName;
+    //     }else return newName;
+    // }
 }
