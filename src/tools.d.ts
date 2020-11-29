@@ -26,19 +26,26 @@ export declare function getTypeElement(element: root): "file" | "dir";
 export declare function lastItem(element: Array<any | undefined | null>): any;
 export declare function ObjectType(type: type, root: root): fileObject | dirObject | undefined;
 export declare class Root implements rootInstance {
-    constructor(root: string);
+    private _root;
+    constructor(root: root);
     isRoot(element: root | Array<root>): boolean;
-    get root(): any;
-    get lastElement(): any;
-    get firstElement(): any;
-    getRoot(...root: Array<string | undefined>): string;
-    existRoot(...root: Array<string>): boolean;
-    toRoot(element: root | Array<root>): string;
+    getRoot: (...root: Array<string | undefined>) => string;
+    existRoot: (...root: Array<string>) => boolean;
+    setRoot: (element: root | Array<root>) => string;
+    remplace: (posicion: number, element: string) => Root;
+    get: (posicion: number) => string;
+    get root(): string;
+    get elements(): string[];
+    get length(): number;
+    get exist(): boolean;
 }
 export declare class fileModel extends Root implements file {
     constructor(root: root);
 }
 export declare class dirModel extends Root implements dir {
+    _name: string;
+    type: "dir";
+    _content: dirContent;
     constructor(root: root);
 }
 export declare class fileObject extends fileModel implements model {

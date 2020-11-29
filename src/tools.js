@@ -52,9 +52,41 @@ exports.ObjectType = ObjectType;
 ;
 class Root {
     constructor(root) {
+        this._root = "./";
+        this.getRoot = (...root) => this.setRoot(root);
+        this.existRoot = (...root) => fs.existsSync(this.getRoot(root.join("\\")));
+        this.setRoot = (element) => {
+            if (typeof element === "string") {
+                if (/\//g.test(element))
+                    return this.setRoot(element.split("/"));
+                else if (/(\\)/g.test(element))
+                    return this.setRoot(element.split("\\"));
+                else
+                    throw { error: "not is root" };
+            }
+            else if (Array.isArray(element)) {
+                return path.resolve(element.join("\\"));
+            }
+            else {
+                throw { error: "not convert root" };
+            }
+        };
+        this.remplace = (posicion, element) => {
+            if (posicion > this.length) {
+                throw { error: "not exist posicion" };
+            }
+            else if (posicion < this.length) {
+                console.log(this.length, posicion, posicion - this.length);
+            }
+        };
+        this.get = (posicion) => this.elements[posicion];
+        if (!root)
+            throw { error: "not defined root" };
         if (this.isRoot(root)) {
-            this._root = toRoot(root);
+            this._root = this.setRoot(root);
         }
+        else
+            throw { error: "not is root" };
     }
     isRoot(element) {
         if (typeof element === "string") {
@@ -75,33 +107,14 @@ class Root {
     get root() {
         return this._root;
     }
-    get lastElement() {
-        return this._root[this._root.length - 1];
+    get elements() {
+        return this._root.split("\\");
     }
-    get firstElement() {
-        return this._root[0];
+    get length() {
+        return this.elements.length;
     }
-    getRoot(...root) {
-        return this.toRoot(root);
-    }
-    existRoot(...root) {
-        return fs.existsSync(this.getRoot(root.join("\\")));
-    }
-    toRoot(element) {
-        if (typeof element === "string") {
-            if (/\//g.test(element))
-                return this.toRoot(element.split("/"));
-            else if (/(\\)/g.test(element))
-                return this.toRoot(element.split("\\"));
-            else
-                throw { error: "not is root" };
-        }
-        else if (Array.isArray(element)) {
-            return path.resolve(element.join("\\"));
-        }
-        else {
-            throw { error: "not convert root" };
-        }
+    get exist() {
+        return this.existRoot(this.root);
     }
 }
 exports.Root = Root;
@@ -114,6 +127,8 @@ exports.fileModel = fileModel;
 class dirModel extends Root {
     constructor(root) {
         super(root);
+        this._name = "";
+        this.type = "dir";
     }
 }
 exports.dirModel = dirModel;

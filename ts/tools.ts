@@ -84,12 +84,14 @@ export function ObjectType(type:type,root:root):fileObject|dirObject|undefined{
 // --------------------------------------Class----------------------------------
 
 export class Root implements rootInstance{
-    constructor(root:string){
+    private _root:string = "./";
+    constructor(root:root){
+        if(!root)throw {error:"not defined root"}
         if(this.isRoot(root)){
-            this._root = toRoot(root);
-        }
+            this._root = this.setRoot(root);
+        }else throw {error:"not is root"}
     }
-    isRoot(element:root|Array<root>):boolean{
+    public isRoot(element:root|Array<root>):boolean{
         if(typeof element === "string"){
             if(/\//g.test(element))
             return true;
@@ -102,27 +104,14 @@ export class Root implements rootInstance{
             return false;
         }
     }
-    get root(){
-        return this._root;
-    }
-    get lastElement(){
-        return this._root[this._root.length-1];
-    }
-    get firstElement(){
-        return this._root[0];
-    }
-    getRoot(...root:Array<string|undefined>):string{
-        return this.toRoot(root);
-    }
-    existRoot(...root:Array<string>):boolean{
-        return fs.existsSync(this.getRoot(root.join("\\")));
-    }
-    toRoot(element:root|Array<root>):string{
+    public getRoot = (...root:Array<string|undefined>):string=>this.setRoot(root);
+    public existRoot = (...root:Array<string>):boolean=>fs.existsSync(this.getRoot(root.join("\\")));
+    public setRoot = (element:root|Array<root>):string=>{
         if(typeof element === "string"){
             if(/\//g.test(element))
-            return this.toRoot(element.split("/"));
+            return this.setRoot(element.split("/"));
             else if(/(\\)/g.test(element))
-            return this.toRoot(element.split("\\"));
+            return this.setRoot(element.split("\\"));
             else throw {error:"not is root"}
         }else if(Array.isArray(element)){
             return path.resolve(element.join("\\"));
@@ -130,11 +119,36 @@ export class Root implements rootInstance{
             throw {error:"not convert root"}
         }
     }
+    public remplace = (posicion:number,element:string):Root=>{
+        if(posicion>this.length){
+            throw {error:"not exist posicion"}
+        }else if(posicion<this.length){
+            console.log(this.length,posicion,posicion-this.length)
+        }
+        // if(posicion<0)return this.remplace(this.length-posicion,element)
+        // else if(posicion===0)throw {error:"not use posicion 0"}
+        // else if(posicion>this.length)throw {error:"not exist posicion"}
+        // else return new Root(
+        //     this.elements.map((a,b)=>b===posicion?element:a).join("\\")
+        // );
+    }
+    public get = (posicion:number):string=>this.elements[posicion];
+    get root(){
+        return this._root;
+    }
+    get elements(){
+        return this._root.split("\\")
+    }
+    get length(){
+        return this.elements.length;
+    }
+    get exist(){
+        return this.existRoot(this.root);
+    }
 }
 
 export class fileModel extends Root implements file{   
     //-------- values
-    // protected _root = "";
     // protected _name:string|undefined;
     // protected _content:fileContent;
     // protected _extencion:string|undefined;
@@ -143,8 +157,6 @@ export class fileModel extends Root implements file{
 
     constructor(root:root){
         super(root);
-        // if(!root)throw {error:"require root"};
-        // this.root = root;
         // this.name = root;
         // this.extension = root;
         // this._content = [];
@@ -210,17 +222,15 @@ export class dirModel extends Root implements dir{
 
     //-------- values
     
-    // _root = "";
-    // _name = "";
-    // type:"dir"="dir";
-    // _content:dirContent;
+    _name = "";
+    type:"dir"="dir";
+    _content:dirContent;
 
     //-------- constructor
     
     constructor(root:root){
         super(root);
-        // this.root = getRoot(root);
-        // this.name = fragmanetRoot(this.root).last;
+        // this.name = this.get(-1);
         // this._content = [];
     }
 
