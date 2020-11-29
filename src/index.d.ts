@@ -12,7 +12,7 @@ export interface IfileExplorer {
     explorer: explorer;
 }
 export declare class fileExplorer implements IfileExplorer {
-    root: string;
+    root: any;
     type: "dir" | "file";
     isExist: boolean;
     constructor(root?: string);

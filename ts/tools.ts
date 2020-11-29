@@ -31,15 +31,13 @@ export type dir = {
     content:dirContent
 }
 
+export type rootInstance = {
 
-type fragmanetMethodsResult = {
-    result:Array<string>
-    last:string,
-    first:string,
-    filter:(posicion:any,i:number,this_array:Array<any>)=>Array<any>,
-    remplaceLast:(name:string)=>string
 }
 
+export type model = {
+    isExist:boolean
+}
 // --------------------------------------Utitlidades----------------------------------
 
 export function getTypeElement(element:root):"file"|"dir"{
@@ -53,63 +51,28 @@ export function lastItem(element:Array<any|undefined|null>){
     else throw {error:"require array"}
 }
 
-export function getRoot(...root:Array<string|undefined>):string{
-    return toRoot(root);
-}
 
-export function existRoot(...root:Array<string>):boolean{
-    return fs.existsSync(getRoot(root.join("\\")));
-}
+// let fragmanetRootMethods = (result:Array<any>):fragmanetMethodsResult=>({
+//     result:result,
+//     last:result[result.length-1],
+//     first:result[0],
+//     filter:result.filter,
+//     remplaceLast:(name:string)=>result.filter((_,b,c)=>b!==c.length-1).join("//")+name
+// })
 
-export function toRoot(element:root|Array<root>):string{
-    if(typeof element === "string"){
-        if(/\//g.test(element))
-        return toRoot(element.split("/"));
-        else if(/(\\)/g.test(element))
-        return toRoot(element.split("\\"));
-        else throw {error:"not is root"}
-    }else if(Array.isArray(element)){
-        return path.resolve(element.join("\\"));
-    }else{
-        throw {error:"not convert root"}
-    }
-}
-
-export function isRoot(element:root|Array<root>):boolean{
-    if(typeof element === "string"){
-        if(/\//g.test(element))
-        return true;
-        else if(/(\\)/g.test(element))
-        return true
-        else return false
-    }else if(Array.isArray(element)){
-        return isRoot(element.join("\\"))
-    }else{
-        return false;
-    }
-}
-
-let fragmanetRootMethods = (result:Array<any>):fragmanetMethodsResult=>({
-    result:result,
-    last:result[result.length-1],
-    first:result[0],
-    filter:result.filter,
-    remplaceLast:(name:string)=>result.filter((_,b,c)=>b!==c.length-1).join("//")+name
-})
-
-export function fragmanetRoot(element:root|Array<root>):fragmanetMethodsResult{
-    if(typeof element === "string"){
-        if(/\//g.test(element))
-        return fragmanetRoot(element.split("/"));
-        else if(/(\\)/g.test(element))
-        return fragmanetRoot(element.split("\\"));
-        else throw {error:"not is root"}
-    }else if(Array.isArray(element)){
-        return fragmanetRootMethods(element);
-    }else{
-        throw {error:"not fragment root"}
-    }
-}
+// export function fragmanetRoot(element:root|Array<root>):fragmanetMethodsResult{
+//     if(typeof element === "string"){
+//         if(/\//g.test(element))
+//         return fragmanetRoot(element.split("/"));
+//         else if(/(\\)/g.test(element))
+//         return fragmanetRoot(element.split("\\"));
+//         else throw {error:"not is root"}
+//     }else if(Array.isArray(element)){
+//         return fragmanetRootMethods(element);
+//     }else{
+//         throw {error:"not fragment root"}
+//     }
+// }
 
 export function ObjectType(type:type,root:root):fileObject|dirObject|undefined{
     if(!root)throw {error:"require root"};
@@ -120,101 +83,152 @@ export function ObjectType(type:type,root:root):fileObject|dirObject|undefined{
 
 // --------------------------------------Class----------------------------------
 
-export class fileModel implements file{
-    
-    //-------- values
-    protected _root = "";
-    protected _name:string|undefined;
-    protected _content:fileContent;
-    protected _extencion:string|undefined;
-    type:"file"="file";
-    //-------- constructor
-
-    constructor(root:root){
-        if(!root)throw {error:"require root"};
-        this.root = root;
-        this.name = root;
-        this.extension = root;
-        this._content = [];
+export class Root implements rootInstance{
+    constructor(root:string){
+        if(this.isRoot(root)){
+            this._root = toRoot(root);
+        }
     }
-    //-------- methods
-    protected getExtension(name?:string):string|undefined{}
-    protected getName(root?:root):{name:string,extension:string}{
-        if(isRoot(root)){
-            return {
-                name:fragmanetRoot(root).last,
-                extension:fragmanetRoot(root).last.split(".")[0]
-            }
-        }else throw {error:"not is root"}
-    }
-    protected read(){return this._content}
-    protected rename(newName:string){return newName;}
-    protected write(data:fileContent|string){
-        if(typeof data === "string")return data.split("\n");
-        else if(Array.isArray(data))return data;
-        else return [new String(data)]
-    }
-    protected newRoot(root:root){
-        if(isRoot(root))return root;
-        else throw {error:"not is root"}
-    }
-    writeLast(...data:fileContent){
-        data.map(e=>this._content.push(e));
-        return this.content;
-    }
-
-    //-------- getters and setters
-    get extension(){
-        return this._extencion;
-    }
-    set extension(a){
-        console.log(a)
-        this._extencion = this.getName(a).extension;
-    }
-    get content(){
-        return this._content = this.read();
-    }
-    set content(data){
-        this._content = this.write(data);
+    isRoot(element:root|Array<root>):boolean{
+        if(typeof element === "string"){
+            if(/\//g.test(element))
+            return true;
+            else if(/(\\)/g.test(element))
+            return true
+            else return false
+        }else if(Array.isArray(element)){
+            return this.isRoot(element.join("\\"))
+        }else{
+            return false;
+        }
     }
     get root(){
         return this._root;
     }
-    set root(a){
-        this._root = getRoot(this.newRoot(a));
+    get lastElement(){
+        return this._root[this._root.length-1];
     }
-    get name(){
-        return this.getName(this.root).name;
+    get firstElement(){
+        return this._root[0];
     }
-    set name(a){
-        if(!a)throw{error:"not defined name"}
-        this.root = fragmanetRoot(this.root).remplaceLast(a);
-        this.extension = this.root;
-        this._name = this.rename(a);
+    getRoot(...root:Array<string|undefined>):string{
+        return this.toRoot(root);
+    }
+    existRoot(...root:Array<string>):boolean{
+        return fs.existsSync(this.getRoot(root.join("\\")));
+    }
+    toRoot(element:root|Array<root>):string{
+        if(typeof element === "string"){
+            if(/\//g.test(element))
+            return this.toRoot(element.split("/"));
+            else if(/(\\)/g.test(element))
+            return this.toRoot(element.split("\\"));
+            else throw {error:"not is root"}
+        }else if(Array.isArray(element)){
+            return path.resolve(element.join("\\"));
+        }else{
+            throw {error:"not convert root"}
+        }
     }
 }
-export class dirModel implements dir{
+
+export class fileModel extends Root implements file{   
+    //-------- values
+    // protected _root = "";
+    // protected _name:string|undefined;
+    // protected _content:fileContent;
+    // protected _extencion:string|undefined;
+    // type:"file"="file";
+    //-------- constructor
+
+    constructor(root:root){
+        super(root);
+        // if(!root)throw {error:"require root"};
+        // this.root = root;
+        // this.name = root;
+        // this.extension = root;
+        // this._content = [];
+    }
+    //-------- methods
+    // protected getExtension(name?:string):string|undefined{}
+    // protected getName(root?:root):{name:string,extension:string}{
+    //     if(isRoot(root)){
+    //         return {
+    //             name:fragmanetRoot(root).last,
+    //             extension:fragmanetRoot(root).last.split(".")[0]
+    //         }
+    //     }else throw {error:"not is root"}
+    // }
+    // protected read(){return this._content}
+    // protected rename(newName:string){return newName;}
+    // protected write(data:fileContent|string){
+    //     if(typeof data === "string")return data.split("\n");
+    //     else if(Array.isArray(data))return data;
+    //     else return [new String(data)]
+    // }
+    // protected newRoot(root:root){
+    //     if(isRoot(root))return root;
+    //     else throw {error:"not is root"}
+    // }
+    // writeLast(...data:fileContent){
+    //     data.map(e=>this._content.push(e));
+    //     return this.content;
+    // }
+
+    //-------- getters and setters
+    
+    // get extension(){
+    //     // return this._extencion;
+    // }
+    // set extension(a){
+    //     // console.log(a)
+    //     // this._extencion = this.getName(a).extension;
+    // }
+    // get content(){
+    //     // return this._content = this.read();
+    // }
+    // set content(data){
+    //     // this._content = this.write(data);
+    // }
+    // get root(){
+    //     // return this._root;
+    // }
+    // set root(a){
+    //     // this._root = getRoot(this.newRoot(a));
+    // }
+    // get name(){
+    //     // return this.getName(this.root).name;
+    // }
+    // set name(a){
+    //     // if(!a)throw{error:"not defined name"}
+    //     // this.root = fragmanetRoot(this.root).remplaceLast(a);
+    //     // this.extension = this.root;
+    //     // this._name = this.rename(a);
+    // }
+}
+export class dirModel extends Root implements dir{
 
     //-------- values
     
-    _root = "";
-    _name = "";
-    type:"dir"="dir";
-    _content:dirContent;
+    // _root = "";
+    // _name = "";
+    // type:"dir"="dir";
+    // _content:dirContent;
 
     //-------- constructor
     
     constructor(root:root){
-        this.root = getRoot(root);
-        this.name = fragmanetRoot(this.root).last;
-        this._content = [];
+        super(root);
+        // this.root = getRoot(root);
+        // this.name = fragmanetRoot(this.root).last;
+        // this._content = [];
     }
 
     //-------- methods
     
-    protected read(){return this._content;}
-    protected add(data:dirContent){return data;}
-    protected rename(newName:string){return newName;}
+    // protected read(){return this._content;}
+    // protected add(data:dirContent){return data;}
+    // protected rename(newName:string){return newName;}
 
     // protected del(name:string){
     //     console.log(this.existElement(name))
@@ -244,28 +258,24 @@ export class dirModel implements dir{
 
     //-------- getters and setters
     
-    get content(){
-        return this.read();
-    }
-    set content(data){
-        this._content = this.add(data);
-    }
-    get root(){
-        return this._root;
-    }
-    set root(a){
-        this._root = a;
-    }
-    get name(){
-        return this._name;
-    }
-    set name(a){
-        this._name = this.rename(a);
-    }
-}
-
-export type model = {
-    isExist:boolean
+    // get content(){
+    //     return this.read();
+    // }
+    // set content(data){
+    //     this._content = this.add(data);
+    // }
+    // get root(){
+    //     return this._root;
+    // }
+    // set root(a){
+    //     this._root = a;
+    // }
+    // get name(){
+    //     return this._name;
+    // }
+    // set name(a){
+    //     this._name = this.rename(a);
+    // }
 }
 
 export class fileObject extends fileModel implements model{
