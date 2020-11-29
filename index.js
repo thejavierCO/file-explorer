@@ -14,6 +14,6 @@ main.content = `
 `
 
 main.writeLast("<flooter>init</flooter")
-// main.name = "play.txt.init.play.config.json";
+main.name = "play.txt.init.play.config.json";
 
 console.log(main);

@@ -19,17 +19,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.dirObject = exports.fileObject = exports.dirModel = exports.fileModel = exports.ObjectType = exports.rootSplit = exports.isRoot = exports.toRoot = exports.lastItem = exports.getTypeElement = exports.existRoot = exports.getRoot = void 0;
+exports.dirObject = exports.fileObject = exports.dirModel = exports.fileModel = exports.ObjectType = exports.fragmanetRoot = exports.isRoot = exports.toRoot = exports.existRoot = exports.getRoot = exports.lastItem = exports.getTypeElement = void 0;
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
-function getRoot(...root) {
-    return toRoot(root);
-}
-exports.getRoot = getRoot;
-function existRoot(...root) {
-    return fs.existsSync(getRoot(root.join("\\")));
-}
-exports.existRoot = existRoot;
 function getTypeElement(element) {
     if (!element)
         throw { error: "not defined root" };
@@ -46,12 +38,20 @@ function lastItem(element) {
         throw { error: "require array" };
 }
 exports.lastItem = lastItem;
+function getRoot(...root) {
+    return toRoot(root);
+}
+exports.getRoot = getRoot;
+function existRoot(...root) {
+    return fs.existsSync(getRoot(root.join("\\")));
+}
+exports.existRoot = existRoot;
 function toRoot(element) {
     if (typeof element === "string") {
         if (/\//g.test(element))
-            return path.resolve(element.split("/").join("\\"));
+            return toRoot(element.split("/"));
         else if (/(\\)/g.test(element))
-            return path.resolve(element.split("/").join("\\"));
+            return toRoot(element.split("\\"));
         else
             throw { error: "not is root" };
     }
@@ -80,23 +80,30 @@ function isRoot(element) {
     }
 }
 exports.isRoot = isRoot;
-function rootSplit(element) {
+let fragmanetRootMethods = (result) => ({
+    result: result,
+    last: result[result.length - 1],
+    first: result[0],
+    filter: result.filter,
+    remplaceLast: (name) => result.filter((_, b, c) => b !== c.length - 1).join("//") + name
+});
+function fragmanetRoot(element) {
     if (typeof element === "string") {
         if (/\//g.test(element))
-            return element.split("/");
+            return fragmanetRoot(element.split("/"));
         else if (/(\\)/g.test(element))
-            return element.split("\\");
+            return fragmanetRoot(element.split("\\"));
         else
             throw { error: "not is root" };
     }
     else if (Array.isArray(element)) {
-        return element;
+        return fragmanetRootMethods(element);
     }
     else {
-        throw { error: "not convert root" };
+        throw { error: "not fragment root" };
     }
 }
-exports.rootSplit = rootSplit;
+exports.fragmanetRoot = fragmanetRoot;
 function ObjectType(type, root) {
     if (!root)
         throw { error: "require root" };
@@ -120,35 +127,19 @@ class fileModel {
         this.extension = root;
         this._content = [];
     }
-    getExtension(name) {
-        if (!name)
-            name = this.root;
-        let get = name.split(".");
-        if (get.length > 1)
-            return lastItem(get);
-        else
-            return undefined;
-    }
+    getExtension(name) { }
     getName(root) {
-        if (!root)
-            return this.getName(this.root);
-        if (typeof root === "string") {
-            console.log(root);
-            let name = lastItem(rootSplit(root));
-            let extencion = name.split(".").filter((a, b, c) => b !== c.length - 1);
-            if (extencion.length > 0) {
-                name = extencion.join(".");
-            }
-            if (isRoot(name)) {
-                return undefined;
-            }
-            return name;
+        if (isRoot(root)) {
+            return {
+                name: fragmanetRoot(root).last,
+                extension: fragmanetRoot(root).last.split(".")[0]
+            };
         }
         else
-            throw { error: "require string" };
+            throw { error: "not is root" };
     }
     read() { return this._content; }
-    rename(newName) { return this.getName(getRoot(this._root, newName)); }
+    rename(newName) { return newName; }
     write(data) {
         if (typeof data === "string")
             return data.split("\n");
@@ -157,20 +148,22 @@ class fileModel {
         else
             return [new String(data)];
     }
-    writeLast(...data) {
-        data.map(e => this.content.push(e));
-        return this.content;
-    }
     newRoot(root) {
-        if (!root)
-            return this.root;
-        return root;
+        if (isRoot(root))
+            return root;
+        else
+            throw { error: "not is root" };
+    }
+    writeLast(...data) {
+        data.map(e => this._content.push(e));
+        return this.content;
     }
     get extension() {
         return this._extencion;
     }
     set extension(a) {
-        this._extencion = this.getExtension(a);
+        console.log(a);
+        this._extencion = this.getName(a).extension;
     }
     get content() {
         return this._content = this.read();
@@ -185,15 +178,13 @@ class fileModel {
         this._root = getRoot(this.newRoot(a));
     }
     get name() {
-        return this.getName(this._name);
+        return this.getName(this.root).name;
     }
     set name(a) {
         if (!a)
             throw { error: "not defined name" };
-        let base = this.root.split("\\").filter((_, b, c) => b !== c.length - 1);
-        base.push(a);
-        this.root = base.join("\\");
-        this.extension = a;
+        this.root = fragmanetRoot(this.root).remplaceLast(a);
+        this.extension = this.root;
         this._name = this.rename(a);
     }
 }
@@ -204,7 +195,7 @@ class dirModel {
         this._name = "";
         this.type = "dir";
         this.root = getRoot(root);
-        this.name = lastItem(rootSplit(this.root));
+        this.name = fragmanetRoot(this.root).last;
         this._content = [];
     }
     read() { return this._content; }
