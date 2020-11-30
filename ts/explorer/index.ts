@@ -11,7 +11,6 @@ export class explorer implements Iexplorer{
     constructor(root:root){
         let data = create(root,getTypeElement(root));
         if(data&&data.exist){
-            data.content = data.content;
             this.data = data;
         }else{
             console.log(data)

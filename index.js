@@ -3,7 +3,7 @@ const {Root,dirModel, fileModel} = require("./src/tools")
 // const {explorer} = require("./src/explorer");
 const {fileExplorer} = require("./src/index");
 
-let main = new fileExplorer("test/play");
+let main = new fileExplorer("test");
 
 // main.content = `
 //     <html>

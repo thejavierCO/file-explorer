@@ -22,7 +22,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.dirObject = exports.fileObject = exports.dirModel = exports.fileModel = exports.Root = exports.ObjectType = exports.getTypeElement = void 0;
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
-const create_1 = require("./create");
 const explorer_1 = require("./explorer");
 function getTypeElement(element) {
     if (!element)
@@ -269,6 +268,7 @@ class dirModel extends Root {
     read() { return this._content; }
     add(data) {
         if (typeof data === "object") {
+            console.log(data);
             this.content.push(data);
             return data;
         }
@@ -360,7 +360,7 @@ class dirObject extends dirModel {
                 .map((e) => new explorer_1.explorer(e));
         }
         else {
-            return this._content.map((e) => new create_1.create(e.data));
+            return this._content;
         }
     }
 }

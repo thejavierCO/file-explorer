@@ -7,7 +7,6 @@ class explorer {
     constructor(root) {
         let data = create_1.create(root, tools_1.getTypeElement(root));
         if (data && data.exist) {
-            data.content = data.content;
             this.data = data;
         }
         else {

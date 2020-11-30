@@ -13,7 +13,7 @@ export type name = string;
 
 export type fileContent = Array<string|String>
 
-export type dirContent = Array<explorer|create>
+export type dirContent = Array<explorer>
 
 export type file = {
     root:root
@@ -134,8 +134,8 @@ export class Root implements rootInstance{
         return this.root;
     }
     public concat(elements:string){return path.join(this.root||"",(this.isRoot(elements)?this.toRoot(elements):""))}
-    public filter(condicion:(posicion:string,index:number,array:object)=>boolean){return this.elements.filter(condicion).join("\\")}
-    public map(condicion:(posicion:string,index:number,array:object)=>any):string{return this.elements.map(condicion).join("\\")}
+    public filter(condicion:(posicion?:string,index?:number,array?:object)=>boolean){return this.elements.filter(condicion).join("\\")}
+    public map(condicion:(posicion?:string,index?:number,array?:object)=>any):string{return this.elements.map(condicion).join("\\")}
     public includes(element:string,fromIndex?:number|undefined):boolean{return  this.elements.includes(element,fromIndex)}
     public slice(start:number,end:number){return this.elements.slice(start,end)};
     get root(){
@@ -255,6 +255,7 @@ export class dirModel extends Root implements dir{
     protected read(){return this._content;}
     protected add(data:dirContent){
         if(typeof data === "object"){
+            console.log(data)
             this.content.push(data);
             return data;
         }else throw {error:"not is explorer or create"}
@@ -357,7 +358,7 @@ export class dirObject extends dirModel implements model{
             return fs.readdirSync(this.root)
             .map((e:string)=>new explorer(e))
         }else{
-            return this._content.map((e:explorer|create)=>new create(e.data));
+            return this._content;
         }
     }
     // protected del(name:string){

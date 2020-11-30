@@ -1,10 +1,9 @@
-import { create } from "./create";
 import { explorer } from "./explorer";
 export declare type root = string | undefined;
 export declare type type = "dir" | "file" | undefined;
 export declare type name = string;
 export declare type fileContent = Array<string | String>;
-export declare type dirContent = Array<explorer | create>;
+export declare type dirContent = Array<explorer>;
 export declare type file = {
     root: root;
     name: name | root;
@@ -36,8 +35,8 @@ export declare class Root implements rootInstance {
     pop(posicion: number): root;
     shift(): root;
     concat(elements: string): string;
-    filter(condicion: (posicion: string, index: number, array: object) => boolean): string;
-    map(condicion: (posicion: string, index: number, array: object) => any): string;
+    filter(condicion: (posicion?: string, index?: number, array?: object) => boolean): string;
+    map(condicion: (posicion?: string, index?: number, array?: object) => any): string;
     includes(element: string, fromIndex?: number | undefined): boolean;
     slice(start: number, end: number): string[];
     get root(): root;
@@ -91,6 +90,6 @@ export declare class fileObject extends fileModel implements model {
 }
 export declare class dirObject extends dirModel implements model {
     constructor(root: string);
-    protected read(): explorer[];
+    protected read(): dirContent;
 }
 //# sourceMappingURL=tools.d.ts.map
