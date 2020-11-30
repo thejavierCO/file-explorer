@@ -1,12 +1,20 @@
-// import {existRoot,getRoot,getTypeElement,lastItem,root,type} from "../tools";
-// import {fileExplorer} from "../index";
-import {explorer} from "../explorer";
+import * as fs from "fs";
+import {fileObject,dirObject, getTypeElement,root,type, ObjectType} from "../tools";
 
-export interface Icreate{}
-
-export class create extends explorer implements Icreate {
-//     // constructor(root:root,type?:type){
-//     //     super(root);
-//     //     console.log(type)
-//     // }
+export function create(root:root |fileObject | dirObject | undefined,type?:type):fileObject | dirObject|undefined{
+    if(typeof root === "object")return root;
+    const data = ObjectType(type?type:getTypeElement(type),root);
+    if(!data)throw {error:"not get data processing"}
+    if(data.exist&&data.root){
+        try{
+            if(fs.readdirSync(data.root)){
+                data.content = fs.readdirSync(data.root)
+                return data;
+            }
+        }catch(err){
+            if(err.code === "ENOTDIR"){
+                return ObjectType("file",root);
+            }else throw err;
+        }
+    }else return data;
 }

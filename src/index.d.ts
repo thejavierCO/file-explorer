@@ -1,22 +1,21 @@
-import { root, type } from "./tools";
+import { root, type, Root } from "./tools";
 import { create } from "./create";
 import { explorer } from "./explorer";
 export interface IfileExplorer {
-    root: root;
     type: type;
-    isExist: boolean;
-    create: (type: type) => create | ({
+    create: ({
         file: () => create;
         dir: () => create;
     });
     explorer: explorer;
 }
-export declare class fileExplorer implements IfileExplorer {
-    root: any;
+export declare class fileExplorer extends Root implements IfileExplorer {
     type: "dir" | "file";
-    isExist: boolean;
-    constructor(root?: string);
-    get create(): (type: type) => create;
+    constructor(root: root);
+    create: {
+        file: (name?: root) => create;
+        dir: (name?: root) => create;
+    };
     get explorer(): explorer;
 }
 //# sourceMappingURL=index.d.ts.map

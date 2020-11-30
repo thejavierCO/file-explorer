@@ -1,6 +1,3 @@
-import { explorer } from "../explorer";
-export interface Icreate {
-}
-export declare class create extends explorer implements Icreate {
-}
+import { fileObject, dirObject, root, type } from "../tools";
+export declare function create(root: root | fileObject | dirObject | undefined, type?: type): fileObject | dirObject | undefined;
 //# sourceMappingURL=index.d.ts.map

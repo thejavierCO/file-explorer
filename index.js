@@ -1,7 +1,9 @@
-const {Root,dirModel} = require("./src/tools")
+const {Root,dirModel, fileModel} = require("./src/tools")
+// const {create} = require("./src/create");
+// const {explorer} = require("./src/explorer");
 const {fileExplorer} = require("./src/index");
 
-let main = new Root("./test/play");
+let main = new fileExplorer("test/play");
 
 // main.content = `
 //     <html>
@@ -15,5 +17,5 @@ let main = new Root("./test/play");
 
 // main.writeLast("<flooter>init</flooter")
 // main.name = "play.txt.init.play.config.json";
-
-console.log(main.remplace(-1,"init"));
+// main.content = "init.play.test.ahsdi.json";
+console.log(main.explorer);
