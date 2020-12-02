@@ -1,25 +1,26 @@
-import {getTypeElement,root,type,name,Root} from "./tools"
+import {getTypeElement,root,type,name,fileObject,dirObject, Root} from "./tools"
 import {create} from "./create";
 import {explorer} from "./explorer";
 
 export interface IfileExplorer{
     type:type;
-    create:({file:()=>create,dir:()=>create})
+    create:({file:(name?:string)=>fileObject,dir:(name?:string)=>fileObject|dirObject|undefined})
     explorer:explorer
 }
 
-export class fileExplorer extends Root implements IfileExplorer{
+export class fileExplorer implements IfileExplorer{
+    root;
     type;
     constructor(root:root){
-        super(root);
-        this.type = getTypeElement(this.root);
+        this.root = new Root(root);
+        this.type = getTypeElement(this.root.root);
     }
     create = {
-        file:(name?:string)=>new create(this.getRoot(this.root,name),"file"),
-        dir:(name?:string)=>new create(this.getRoot(this.root,name),"dir")
+        file:(name:string)=>create(this.root.getRoot(this.root.root,name),"file"),
+        dir:(name:string)=>create(this.root.getRoot(this.root.root,name),"dir")
     }
     get explorer(){
-        return new explorer(this.root);
+        return new explorer(this.root.root);
     }
 }
 
