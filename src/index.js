@@ -1,33 +1,27 @@
 let path = require("path");
 let fs = require("fs");
-let file = require("./origin/file");
-let dir = require("./origin/dir");
-let is = require("./tools/is");
-let lastElement = require("./tools/lastElement");
-let make = require("./make/idk");
+const Dir = require("./js/dir");
+const File = require("./js/file");
 
 class fileBrowser{
-    constructor(root=path.resolve("./")){
-        root = path.resolve(is(root,false)==="string"?root:"./");
-        if(fs.existsSync(path.resolve(typeof root === "string"?root:"./"))){
-            if(is(lastElement(root.split("\\")))==="file"){
-                this.Methods = new file(root,fileBrowser);
-            }else if(is(lastElement(root.split("\\")))==="dir"){
-                this.Methods = new dir(root,fileBrowser);
-            }
-            this.make = (name)=>new make(name,root);
-        }else{
-            throw {error:"not exist root "+path.resolve(root?root:"./")}
-        }
+    constructor(root="./"){
+        root = path.resolve(root)
+        this._root = root;
+        this._exist = fs.existsSync(root);
     }
-    set Methods(a){
-        if(typeof a === "object"&&a.length<0)throw {error:"require object keys"}
-        for (const name in a) {
-            if (a.hasOwnProperty(name)) {
-                const e = a[name];
-                this[name] = e;
-            }
-        }
+    getDir(ruta){
+        return fs.readdirSync(path.resolve(ruta)).map(e=>{
+            let name = e;
+            let router = path.resolve(ruta,e);
+            fs.readdir(router,err=>{
+                console.log(err)
+            })
+            return e;
+        })
+    }
+    getDirectorys(){
+        console.log(this.getDir(this._root))
+        return new Dir(this._root);
     }
 }
 
