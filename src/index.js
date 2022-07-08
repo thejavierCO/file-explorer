@@ -13,9 +13,11 @@ class fileBrowser{
         return fs.readdirSync(path.resolve(ruta)).map(e=>{
             let name = e;
             let router = path.resolve(ruta,e);
-            fs.readdir(router,err=>{
-                console.log(err)
-            })
+            try{
+                fs.readdirSync(router);
+            }catch(err){
+
+            }
             return e;
         })
     }
