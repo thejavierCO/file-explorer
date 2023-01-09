@@ -16,7 +16,7 @@ class fileBrowser{
             try{
                 fs.readdirSync(router);
             }catch(err){
-
+                console.log("error")
             }
             return e;
         })
